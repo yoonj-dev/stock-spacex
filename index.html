@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#4F46E5" />
+    <title>SpaceX on Tap · 스페이스X(NASDAQ:SPCX) 스타링크 & 스타쉽 퀀트 인텔리전스</title>
+    <meta name="description" content="스페이스X(SpaceX, SPCX) 실시간 시세, 스타링크 D2D 통신, 스타쉽 완전 재사용 로켓, 6대 핵심 비즈니스 엔진 및 밸류에이션 터미널" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content="SpaceX on Tap · 스페이스X(SPCX) 퀀트 인텔리전스" />
+    <meta property="og:description" content="스타링크, 스타쉽, 스타실드 6대 핵심 비즈니스 엔진 및 실시간 터미널" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content="https://spacex.on-tap.xyz" />
+
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('spacex_theme') || 'auto';
+          var isDark = saved === 'dark' || (saved === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch(e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-[#f8fafc] dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
