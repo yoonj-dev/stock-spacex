@@ -12,6 +12,14 @@ export const Footer: React.FC = () => {
 
         <div className="flex items-center gap-4 text-[11px]">
           <a
+            href="https://stock.on-tap.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-blue-600 dark:text-blue-400 hover:underline transition-colors"
+          >
+            📈 Stock on Tap
+          </a>
+          <a
             href="https://tsla.on-tap.xyz"
             target="_blank"
             rel="noopener noreferrer"
