@@ -3,10 +3,11 @@ import { Header } from './components/layout/Header';
 import { SingleStockTerminal } from './components/dashboard/SingleStockTerminal';
 import { Footer } from './components/layout/Footer';
 import { ThemeMode, getStoredThemeMode, applyThemeToDom, resolveTheme } from './lib/theme';
-import { StockFundamentals } from './types/stock';
+import { fetchStockData } from './lib/stockApi';
+import { StockData, StockFundamentals } from './types/stock';
 import { SPACEX_PROFILE } from './lib/profiles/spacexProfile';
 
-const MOCK_SPACEX_DATA: StockFundamentals = {
+const BASELINE_SPACEX_DATA: StockFundamentals = {
   ticker: 'SPCX',
   symbol: 'SPCX',
   currentPrice: 148.50,
@@ -28,43 +29,55 @@ const MOCK_SPACEX_DATA: StockFundamentals = {
 
 export const App: React.FC = () => {
   const [currentThemeMode, setCurrentThemeMode] = useState<ThemeMode>(getStoredThemeMode);
-  const [stockData, setStockData] = useState<StockFundamentals>(MOCK_SPACEX_DATA);
+  const [spacexData, setSpacexData] = useState<StockData | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     applyThemeToDom(currentThemeMode, true);
   }, [currentThemeMode]);
 
-  const handleRefresh = async () => {
+  const loadData = async () => {
     setIsRefreshing(true);
-    setTimeout(() => {
-      setStockData((prev) => ({
-        ...prev,
-        currentPrice: Number((prev.currentPrice + (Math.random() * 2.0 - 1.0)).toFixed(2)),
-      }));
+    try {
+      const data = await fetchStockData('SPCX');
+      if (data?.fundamentals) {
+        setSpacexData(data);
+      }
+    } catch (err) {
+      console.warn('[App] Failed to refresh live data:', err);
+    } finally {
       setIsRefreshing(false);
-    }, 600);
+    }
   };
 
+  useEffect(() => {
+    loadData();
+    const interval = setInterval(loadData, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fundamentals = spacexData?.fundamentals || BASELINE_SPACEX_DATA;
+  const candles = spacexData?.candles?.['1d_intraday'] || [];
   const resolvedTheme = resolveTheme(currentThemeMode);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 transition-colors">
+    <div className="min-h-screen flex flex-col bg-[#f4f5f7] dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 transition-colors">
       <Header
         currentThemeMode={currentThemeMode}
         onThemeModeChanged={setCurrentThemeMode}
-        fundamentals={stockData}
+        fundamentals={fundamentals}
         isRefreshing={isRefreshing}
-        onRefresh={handleRefresh}
+        onRefresh={loadData}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-5">
         <SingleStockTerminal
           profile={SPACEX_PROFILE}
-          fundamentals={stockData}
+          fundamentals={fundamentals}
+          candles={candles}
           resolvedTheme={resolvedTheme}
           isRefreshing={isRefreshing}
-          onRefresh={handleRefresh}
+          onRefresh={loadData}
         />
       </main>
 
